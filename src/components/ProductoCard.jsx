@@ -1,62 +1,66 @@
-import { useParams, Link } from 'react-router-dom';
-import useAPIConsultor from '../hooks/useAPIConsultor';
+//*"Importo useContext para leer la info global, Link para navegar y la caja del carrito"*//
+import { useContext } from "react";
+import { Link } from "react-router-dom";
+import { CarritoContext } from "../context/Carrito";
 
-export default function PagProducto() {
-   const { id } = useParams();
-   const { datos: producto, cargando, error } = useAPIConsultor(`https://fakestoreapi.com/products/${id}`);
+//*"Tarjeta pequena del catalogo: recibe un producto por props desde la pagina que la usa"*//
+export default function ProductoCard({ producto }) {
+  //*"Saco del contexto global las funciones y la lista de favoritos"*//
+  const { agregarAlCarrito, favoritos, toggleFavorito } = useContext(CarritoContext);
 
-  if (cargando) {
-    return <div className='text-center mt-10 text-xl'>Cargando detalles del producto...</div>;
-  }
-
-  if (error) {
-    return <div className='text-center mt-10 text-red-500 text-xl'>Error al cargar el producto: {error}</div>;
-  }
-
- 
-  if (!producto) {
-    return <div className='text-center mt-10 text-xl'>Producto no encontrado.</div>;
-  }
+  //*"Reviso con .some() si este producto ya esta en favoritos (para pintar el corazon a color)"*//
+  const esFavorito = favoritos.some((p) => p.id === producto.id);
 
   return (
-    <div className='container mx-auto p-4 max-w-4xl'>
-      
-      <Link 
-        to="/" 
-        className='inline-block mb-6 bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300 transition text-sm font-medium'
+    <div className="border border-gray-100 p-3 rounded-xl bg-white shadow-sm flex flex-col justify-between relative group">
+      {/* "Boton flotante izquierdo: corazon de favorito" */}
+      <button
+        type="button"
+        onClick={() => toggleFavorito(producto)}
+        className="absolute top-3 left-3 z-10 w-8 h-8 bg-white/80 backdrop-blur-xs rounded-full border shadow-xs flex items-center justify-center transition hover:scale-110"
       >
-        ← Volver al catálogo
-      </Link>
+        <img
+          src={esFavorito ? "/corazon-color.svg" : "/corazon-bn.svg"}
+          alt="Favorito"
+          className="w-4 h-4"
+        />
+      </button>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-6 rounded-lg shadow-md border'>
-        
-        
-        <div className='flex justify-center items-center p-4 bg-gray-50 rounded-lg'>
-          <img 
-            src={producto.image} 
-            alt={producto.title} 
-            className='max-h-80 object-contain'
+      {/* "Boton flotante derecho: agregar rapido al carrito" */}
+      <button
+        type="button"
+        onClick={() => agregarAlCarrito(producto)}
+        className="absolute top-3 right-3 z-10 w-8 h-8 bg-white/80 backdrop-blur-xs rounded-full border shadow-xs flex items-center justify-center transition hover:scale-110"
+      >
+        <img src="/carrito-bn.svg" alt="Agregar al carrito" className="w-4 h-4" />
+      </button>
+
+      {/* "Cuerpo: imagen, categoria y titulo recortado del producto" */}
+      <div>
+        <div className="h-40 md:h-48 w-full bg-gray-50 rounded-lg p-2 mb-3 overflow-hidden">
+          <img
+            src={producto.image}
+            alt={producto.title}
+            className="w-full h-full object-contain transition group-hover:scale-105"
           />
         </div>
+        <span className="text-[10px] uppercase font-bold tracking-wider text-gray-400 block mb-1">
+          {producto.category}
+        </span>
+        <h3 className="font-semibold text-xs md:text-sm line-clamp-2 text-gray-800 h-8 md:h-10">
+          {producto.title}
+        </h3>
+      </div>
 
-        
-        <div className='flex flex-col justify-between'>
-          <div>
-            <span className='inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded uppercase tracking-wide mb-2'>
-              {producto.category}
-            </span>
-            <h1 className='text-2xl font-bold text-gray-900 mb-4'>{producto.title}</h1>
-            <p className='text-gray-600 leading-relaxed mb-6'>{producto.description}</p>
-          </div>
-
-          <div>
-            <p className='text-3xl font-extrabold text-gray-900 mb-4'>${producto.price}</p>
-            <button className='w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition'>
-              Añadir al carrito
-            </button>
-          </div>
-        </div>
-
+      {/* "Precio y enlace que lleva a la pagina de detalle de este producto" */}
+      <div className="mt-2">
+        <p className="text-gray-900 font-bold text-sm md:text-base">${producto.price}</p>
+        <Link
+          to={`/products/${producto.id}`}
+          className="block text-center w-full mt-2 bg-gray-900 text-white py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-blue-600 transition"
+        >
+          Ver detalles
+        </Link>
       </div>
     </div>
   );
