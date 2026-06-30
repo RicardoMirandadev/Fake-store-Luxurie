@@ -1,10 +1,17 @@
 //*"Importo Link para los enlaces y useLocation para saber en que pagina estoy"*//
 import { Link, useLocation } from "react-router-dom";
+//*"Importo useState para controlar la apertura de los modales de soporte y legales"*//
+import { useState } from "react";
+//*"Importo el componente del modal dinámico"*//
+import ModalFooter from "./ModalFooter";
 
 //*"Pie de pagina en escritorio y barra de navegacion abajo en movil"*//
 export default function Footer() {
   //*"location me dice la ruta actual para resaltar el boton activo en movil"*//
   const location = useLocation();
+
+  //*"Estado para capturar que modal interactivo abrir"*//
+  const [modalActivo, setModalActivo] = useState(null);
 
   //*"Lista de botones de la barra inferior en movil"*//
   const navegacionMovil = [
@@ -29,12 +36,24 @@ export default function Footer() {
             Referente Premium para productos de estilo de vida, desde joyería hasta electrónica. Calidad garantizada.
           </p>
           <div className="flex items-center gap-3 mt-2">
-            <button className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-gray-50">
-              <span className="text-xs">🔗</span>
-            </button>
-            <button className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-gray-50">
-              <span className="text-xs">🌐</span>
-            </button>
+            {/* "Enlace tipo cadena que apunta directo al repositorio del proyecto" */}
+            <a 
+              href="https://github.com/RicardoMirandadev/Fake-store-Luxurie.git" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-gray-50 text-xs"
+            >
+              🔗
+            </a>
+            {/* "Enlace tipo mundo que apunta directo a mi perfil personal de GitHub" */}
+            <a 
+              href="https://github.com/RicardoMirandadev" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-gray-50 text-xs"
+            >
+              🌐
+            </a>
           </div>
         </div>
 
@@ -47,29 +66,36 @@ export default function Footer() {
           <Link to="/explore" className="hover:text-blue-600 text-xs">Ropa de Mujer</Link>
         </div>
 
-        {/* "Columna de soporte" */}
+        {/* "Columna de soporte con botones interactivos para activar los modales personalizados" */}
         <div className="flex flex-col gap-2">
           <h3 className="font-bold text-gray-900 tracking-wider text-xs uppercase mb-1">Soporte</h3>
-          <Link to="/" className="hover:text-blue-600 text-xs">Centro de Ayuda</Link>
-          <Link to="/" className="hover:text-blue-600 text-xs">Política de Envíos</Link>
-          <Link to="/" className="hover:text-blue-600 text-xs">Devoluciones y Reembolsos</Link>
-          <Link to="/" className="hover:text-blue-600 text-xs">Seguimiento de Pedido</Link>
+          <button onClick={() => setModalActivo("soporte")} className="text-left hover:text-blue-600 text-xs focus:outline-none">Centro de Ayuda</button>
+          <button onClick={() => setModalActivo("envios")} className="text-left hover:text-blue-600 text-xs focus:outline-none">Política de Envíos</button>
+          <button onClick={() => setModalActivo("devoluciones")} className="text-left hover:text-blue-600 text-xs focus:outline-none">Devoluciones y Reembolsos</button>
+          <button onClick={() => setModalActivo("seguimiento")} className="text-left hover:text-blue-600 text-xs focus:outline-none">Seguimiento de Pedido</button>
         </div>
 
         {/* "Columna del boletin (newsletter)" */}
         <div className="flex flex-col gap-3">
           <h3 className="font-bold text-gray-900 tracking-wider text-xs uppercase mb-1">Boletin</h3>
           <p className="text-gray-500 text-xs">Mantengase actualizado con nuestras ultimas odertas.</p>
-          <div className="flex flex-col gap-2">
+          <form 
+            onSubmit={(e) => { e.preventDefault(); setModalActivo("legales"); }} 
+            className="flex flex-col gap-2"
+          >
             <input
               type="email"
               placeholder="Your email address"
+              required
               className="w-full border p-2 rounded bg-gray-50 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
-            <button className="w-full bg-blue-600 text-white font-semibold py-2 rounded text-xs hover:bg-blue-700 transition">
+            <button 
+              type="submit" // <-- ASEGÚRATE DE QUE DIGA ESTO EXACTAMENTE
+              className="w-full bg-blue-600 text-white font-semibold py-2 rounded text-xs hover:bg-blue-700 transition"
+            >
               Subscribirse
             </button>
-          </div>
+          </form>
         </div>
 
       </div>
@@ -79,9 +105,9 @@ export default function Footer() {
         <div className="container mx-auto px-4 flex justify-between items-center text-[11px] text-gray-400">
           <p>© 2026 Luxurie Store. Powered by FakeStore API. Ricardo Miranda</p>
           <div className="flex gap-4">
-            <Link to="/" className="hover:underline">Condiciones de servicio</Link>
-            <Link to="/" className="hover:underline">Politicas de privacidad</Link>
-            <Link to="/" className="hover:underline">Cookies</Link>
+            <button onClick={() => setModalActivo("legales")} className="hover:underline focus:outline-none text-gray-400">Condiciones de servicio</button>
+            <button onClick={() => setModalActivo("legales")} className="hover:underline focus:outline-none text-gray-400">Politicas de privacidad</button>
+            <button onClick={() => setModalActivo("legales")} className="hover:underline focus:outline-none text-gray-400">Cookies</button>
           </div>
         </div>
       </div>
@@ -104,6 +130,11 @@ export default function Footer() {
           );
         })}
       </nav>
+
+      {/* "Inyeccion condicional del modal cuando se selecciona una opcion" */}
+      {modalActivo && (
+        <ModalFooter tipo={modalActivo} alCerrar={() => setModalActivo(null)} />
+      )}
 
     </footer>
   );

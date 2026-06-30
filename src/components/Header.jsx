@@ -15,7 +15,7 @@ export default function Header() {
   setCategoriaSeleccionada
 } = useContext(CarritoContext);
 
-  //*"navigate me deja cambiar de pagina por codigo. encimaHome controla el icono de home al pasar el mouse"*//
+  //*"navigate me deja cambiar de pagina por codigo. Controlo el icono de home al pasar el mouse"*//
   const navigate = useNavigate();
   const [encimaHome, setEncimaHome] = useState(false);
 
