@@ -80,6 +80,15 @@ export default function PagProducto() {
               <p className="text-gray-500 text-xs leading-relaxed font-light mb-4 line-clamp-6">
                 {producto.description}
               </p>
+
+              {/* "Valoracion del producto (rating de la API). Solo se muestra si el producto lo trae" */}
+              {producto.rating && (
+                <div className="flex items-center gap-2 text-xs text-gray-600 mb-2">
+                  <span className="text-yellow-500">★</span>
+                  <span className="font-bold text-gray-800">{producto.rating.rate}</span>
+                  <span className="text-gray-400">({producto.rating.count} valoraciones)</span>
+                </div>
+              )}
             </div>
 
             <div>
