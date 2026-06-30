@@ -1,31 +1,36 @@
-//*"Importo contexto, Link y mi hook de API"*//
+//*"Importo contexto, Link, useParams (para leer la categoria de la URL) y mi hook de API"*//
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useAPIConsultor from "../hooks/useAPIConsultor";
 import { CarritoContext } from "../context/Carrito";
 
-//*"Pagina de catalogo completo con filtro por busqueda y por categoria"*//
+//*"Pagina de catalogo: muestra todos los productos o los de una categoria segun la URL"*//
 export default function Explorar() {
-  //*"Pido todos los productos a la API"*//
-  const { datos: productos, cargando, error } = useAPIConsultor("https://fakestoreapi.com/products");
-  //*"Leo del contexto el texto buscado y la categoria elegida (vienen del Header)"*//
-  const { busquedaGlobal, categoriaSeleccionada } = useContext(CarritoContext);
+  //*"Leo la categoria desde la URL. En /explore viene vacia; en /products/category/x trae la categoria"*//
+  const { category } = useParams();
+
+  //*"Si hay categoria pido al endpoint /products/category/:category; si no, pido todos los productos"*//
+  const url = category
+    ? `https://fakestoreapi.com/products/category/${encodeURIComponent(category)}`
+    : "https://fakestoreapi.com/products";
+
+  const { datos: productos, cargando, error } = useAPIConsultor(url);
+  //*"Del contexto solo necesito el texto del buscador (la categoria ya la filtra la API)"*//
+  const { busquedaGlobal } = useContext(CarritoContext);
 
   if (cargando) return <div className="text-center mt-10 text-xl">Cargando catálogo...</div>;
   if (error) return <div className="text-center mt-10 text-red-500 text-xl">Error: {error}</div>;
 
-  //*"Filtro los productos: deben coincidir con el texto buscado Y con la categoria"*//
-  const productosFiltrados = productos?.filter((producto) => {
-    const coincideBusqueda = producto.title.toLowerCase().includes(busquedaGlobal.toLowerCase());
-    const coincideCategoria = categoriaSeleccionada === '' || producto.category === categoriaSeleccionada;
-    return coincideBusqueda && coincideCategoria;
-  });
+  //*"Filtro solo por el texto buscado; la categoria ya viene resuelta desde la API"*//
+  const productosFiltrados = productos?.filter((producto) =>
+    producto.title.toLowerCase().includes(busquedaGlobal.toLowerCase())
+  );
 
   return (
     <div className="container mx-auto p-4 mb-12">
-      {/* "Titulo que cambia segun haya o no categoria seleccionada" */}
+      {/* "Titulo: cambia si estoy viendo el catalogo completo o una categoria" */}
       <h1 className="text-2xl font-extrabold mb-6 text-gray-900 tracking-tight">
-        {categoriaSeleccionada === "" ? "Catálogo Completo" : `Categoría: ${categoriaSeleccionada}`}
+        {category ? `Categoría: ${category}` : "Catálogo Completo"}
       </h1>
 
       {/* "Grilla con cada producto ya filtrado" */}

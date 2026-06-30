@@ -82,7 +82,7 @@ export default function Inicio() {
 
         <hr className="my-10 border-gray-100" />
 
-        {/* "Seccion comprar por categoria: cada circulo guarda la categoria y lleva a Explorar" */}
+        {/* "Seccion comprar por categoria: cada circulo lleva a la ruta de su categoria (o al catalogo si es Todas)" */}
         <div className="my-10">
           <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Comprar por Categoría</h2>
           <div className="flex items-center gap-6 overflow-x-auto py-2">
@@ -95,7 +95,7 @@ export default function Inicio() {
             ].map((cat) => (
               <Link
                 key={cat.id}
-                to="/explore"
+                to={cat.id === "" ? "/explore" : `/products/category/${encodeURIComponent(cat.id)}`}
                 onClick={() => setCategoriaSeleccionada(cat.id)}
                 className="flex flex-col items-center gap-2 min-w-17.5 focus:outline-none"
               >

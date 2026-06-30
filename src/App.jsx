@@ -32,6 +32,8 @@ function App() {
               <Route path="/explore" element={<Explorar />} />
               <Route path="/wishlist" element={<Favoritos />} />
               <Route path="/cesta" element={<Cesta />} />
+              {/* "Ruta de categoria: usa el endpoint /products/category/:category de la API" */}
+              <Route path="/products/category/:category" element={<Explorar />} />
               {/* ":id es comodin: lee el numero del producto desde la URL" */}
               <Route path="/products/:id" element={<PagProducto />} />
               {/* "El * atrapa cualquier ruta que no exista y muestra el 404" */}

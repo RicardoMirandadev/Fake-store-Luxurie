@@ -38,10 +38,14 @@ export default function Header() {
     navigate("/explore");
   };
 
-  //*"Al elegir categoria la guardo global y mando a Explorar para ver el filtro"*//
+  //*"Al elegir categoria la guardo (para resaltarla) y navego: 'All' al catalogo completo, el resto a su ruta de categoria"*//
   const manejarCambioCategoria = (id) => {
     setCategoriaSeleccionada(id);
-    navigate("/explore");
+    if (id === "") {
+      navigate("/explore");
+    } else {
+      navigate(`/products/category/${encodeURIComponent(id)}`);
+    }
   };
 
   return (
