@@ -143,6 +143,10 @@ Requiere Node.js y pnpm.
 Al ejecutar `pnpm dev`, la aplicación queda disponible en la dirección que
 aparece en la terminal (por defecto http://localhost:5173).
 
+## Integrantes
+
+- Ricardo Miranda
+
 ## Enlaces
 
 Repositorio: https://github.com/RicardoMirandadev/Fake-store-Luxurie
