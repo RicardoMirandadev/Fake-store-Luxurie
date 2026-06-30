@@ -37,23 +37,29 @@ export default function Explorar() {
         {category ? `Categoría: ${category}` : "Catálogo Completo"}
       </h1>
 
-      {/* "Grilla con cada producto ya filtrado" */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
-        {productosFiltrados?.map((producto) => (
-          <div key={producto.id} className='border p-4 rounded-xl shadow-sm bg-white flex flex-col justify-between border-gray-100'>
-            <div>
-              <img src={producto.image} alt={producto.title} className='h-48 w-full object-contain mb-4' />
-              <h2 className='font-semibold text-sm line-clamp-2 text-gray-800'>{producto.title}</h2>
+      {/* "Si el filtro no devolvio nada muestro un aviso; si hay resultados muestro la grilla" */}
+      {productosFiltrados?.length === 0 ? (
+        <div className="text-center py-16 text-gray-400 text-sm">
+          No encontramos productos que coincidan{busquedaGlobal ? ` con "${busquedaGlobal}"` : ""}.
+        </div>
+      ) : (
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+          {productosFiltrados?.map((producto) => (
+            <div key={producto.id} className='border p-4 rounded-xl shadow-sm bg-white flex flex-col justify-between border-gray-100'>
+              <div>
+                <img src={producto.image} alt={producto.title} className='h-48 w-full object-contain mb-4' />
+                <h2 className='font-semibold text-sm line-clamp-2 text-gray-800'>{producto.title}</h2>
+              </div>
+              <div className='mt-4'>
+                <p className='text-gray-900 font-bold text-lg'>${producto.price}</p>
+                <Link to={`/products/${producto.id}`} className='block text-center w-full mt-2 bg-blue-600 text-white py-2 px-4 rounded-lg text-xs font-bold uppercase'>
+                  Ver detalles
+                </Link>
+              </div>
             </div>
-            <div className='mt-4'>
-              <p className='text-gray-900 font-bold text-lg'>${producto.price}</p>
-              <Link to={`/products/${producto.id}`} className='block text-center w-full mt-2 bg-blue-600 text-white py-2 px-4 rounded-lg text-xs font-bold uppercase'>
-                Ver detalles
-              </Link>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
