@@ -1,8 +1,10 @@
-//*"Importo contexto, Link, useParams (para leer la categoria de la URL) y mi hook de API"*//
+//*"Importo contexto, Link, useParams (para leer la categoria de la URL), mi hook y los avisos de estado"*//
 import { useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import useAPIConsultor from "../hooks/useAPIConsultor";
 import { CarritoContext } from "../context/Carrito";
+import Cargando from "../components/Cargando";
+import AvisoApi from "../components/AvisoApi";
 
 //*"Pagina de catalogo: muestra todos los productos o los de una categoria segun la URL"*//
 export default function Explorar() {
@@ -14,12 +16,14 @@ export default function Explorar() {
     ? `https://fakestoreapi.com/products/category/${encodeURIComponent(category)}`
     : "https://fakestoreapi.com/products";
 
-  const { datos: productos, cargando, error } = useAPIConsultor(url);
+  const { datos: productos, cargando, error, recargar } = useAPIConsultor(url);
   //*"Del contexto solo necesito el texto del buscador (la categoria ya la filtra la API)"*//
   const { busquedaGlobal } = useContext(CarritoContext);
 
-  if (cargando) return <div className="text-center mt-10 text-xl">Cargando catálogo...</div>;
-  if (error) return <div className="text-center mt-10 text-red-500 text-xl">Error: {error}</div>;
+  //*"Estado cargando: muestro el spinner reutilizable"*//
+  if (cargando) return <Cargando texto="Cargando catálogo..." />;
+  //*"Estado error: muestro el aviso con boton Reintentar (le paso recargar del hook)"*//
+  if (error) return <AvisoApi onReintentar={recargar} />;
 
   //*"Filtro solo por el texto buscado; la categoria ya viene resuelta desde la API"*//
   const productosFiltrados = productos?.filter((producto) =>

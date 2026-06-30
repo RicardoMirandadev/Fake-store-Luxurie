@@ -1,13 +1,15 @@
-//*"Importo contexto, Link y mi hook de API para traer los productos"*//
+//*"Importo contexto, Link, mi hook de API y los avisos de estado (spinner y error)"*//
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import useAPIConsultor from "../hooks/useAPIConsultor";
 import { CarritoContext } from "../context/Carrito";
+import Cargando from "../components/Cargando";
+import AvisoApi from "../components/AvisoApi";
 
 //*"Pagina de inicio: portada, novedades y accesos por categoria"*//
 export default function Inicio() {
   //*"Pido todos los productos a la API"*//
-  const { datos: productos, cargando } = useAPIConsultor("https://fakestoreapi.com/products");
+  const { datos: productos, cargando, error, recargar } = useAPIConsultor("https://fakestoreapi.com/products");
   //*"Saco del contexto la funcion para guardar la categoria elegida"*//
   const { setCategoriaSeleccionada } = useContext(CarritoContext);
 
@@ -54,9 +56,11 @@ export default function Inicio() {
             </Link>
           </div>
 
-          {/* "Mientras carga muestro un aviso; cuando llega la data pinto la grilla" */}
+          {/* "Tres estados: cargando (spinner), error (aviso con reintentar) o la grilla con datos" */}
           {cargando ? (
-            <div className="text-center py-10 text-gray-400">Cargando novedades...</div>
+            <Cargando texto="Cargando novedades..." />
+          ) : error ? (
+            <AvisoApi onReintentar={recargar} />
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {nuevosIngresos.map((producto) => (

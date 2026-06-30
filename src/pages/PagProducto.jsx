@@ -3,18 +3,24 @@ import { useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import useAPIConsultor from "../hooks/useAPIConsultor";
 import { CarritoContext } from "../context/Carrito";
+import Cargando from "../components/Cargando";
+import AvisoApi from "../components/AvisoApi";
 
 //*"Pantalla de detalle de UN producto"*//
 export default function PagProducto() {
   //*"useParams lee el id que viene en la URL (/products/5 -> id = 5)"*//
   const { id } = useParams();
   //*"Con ese id le pido a la API solo ese producto"*//
-  const { datos: producto, cargando } = useAPIConsultor(`https://fakestoreapi.com/products/${id}`);
+  const { datos: producto, cargando, error, recargar } = useAPIConsultor(`https://fakestoreapi.com/products/${id}`);
 
   //*"Saco del contexto global las herramientas de carrito y favoritos"*//
   const { agregarAlCarrito, favoritos, toggleFavorito } = useContext(CarritoContext);
 
-  if (cargando) return <div className="text-center mt-10 text-xs text-gray-400">Cargando producto...</div>;
+  //*"Estado cargando: spinner reutilizable"*//
+  if (cargando) return <Cargando texto="Cargando producto..." />;
+  //*"Estado error: aviso con boton Reintentar"*//
+  if (error) return <AvisoApi onReintentar={recargar} />;
+  //*"Si la API respondio pero no hay producto con ese id"*//
   if (!producto) return <div className="text-center mt-10 text-xs text-red-500">Producto no encontrado</div>;
 
   //*"Reviso con .some() si este producto ya esta marcado como favorito"*//
